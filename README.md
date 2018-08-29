@@ -6,7 +6,7 @@
 
 - Plot the data and send it to [Weibo](https://weibo.com/cangshucangshu) everyday
 
-  ![Capture](Resources\Capture.JPG)
+  ![Capture](Resources/Capture.JPG)
 
 
 
@@ -26,9 +26,9 @@ The raspberrypi reads the signal infinitely and write them to [influxdb](https:/
 
 
 
-![Cage](Resources\Cage.jpg)
+![Cage](Resources/Cage.jpg)
 
-![Hardware](Resources\Hardware.jpg)
+![Hardware](Resources/Hardware.jpg)
 
 ## Software Dependence:
 
