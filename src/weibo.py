@@ -53,28 +53,33 @@ def send_weibo_retry(text, image):
 
 
 def plot(y):
+    x = np.linspace(0, 24, 144, endpoint=False)
     plt.style.use('ggplot')
-    plt.figure(figsize=(10, 5))
+    fig = plt.figure(figsize=(10, 5))
     plt.title("Hamster Bob,Charlie,Dave's Running Log - %s" % date.isoformat(date.today()))
-    plt.xlim((1, len(y)))
-    plt.xlabel("Time")
-    plt.ylabel("Round")
-    plt.plot(np.arange(1, 1 + len(y)), np.array(y), '-', label="Hourly")
+    plt.xlim((0, 24))
+    plt.xlabel("Time (h)")
+    ax1 = fig.add_subplot(111)
+    ax1.plot(x, np.array(y), '-r', label="10min")
+    ax1.set_ylabel("Distance (m/10min)")
     stmp = 0
     for i in range(len(y)):
         y[i] += stmp
         stmp = y[i]
-    plt.plot(np.arange(1, 1 + len(y)), np.array(y), '-', label="Sum")
-    plt.legend()
+    ax2 = ax1.twinx()
+    ax2.set_ylabel("Total Distance (m)")
+    ax2.plot(x, np.array(y), '--b', label="Sum")
+    ax1.legend()
+    ax2.legend()
     plt.grid(True)
     plt.savefig(tmpFilePath)
 
 
 def update():
     client = InfluxDBClient(dbAddr, dbPort, dbUserName, dbPassword, dbName)
-    lastDay = list(client.query('select sum(round) from round where time > now() - 24h group by time(1h) fill(0)')['round'])[-24:]
-    if len(lastDay) == 24:
-        y = [point['sum'] for point in lastDay]
+    lastDay = list(client.query('select sum(round) from round where time > now() - 24h group by time(10m) fill(0)')['round'])[-144:]
+    if len(lastDay) == 144:
+        y = [point['sum']*0.314 for point in lastDay]
         plot(y)
         send_weibo_retry(u"仓鼠运动", True)
 
